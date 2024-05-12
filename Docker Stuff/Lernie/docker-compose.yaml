@@ -1,0 +1,133 @@
+# This includes Plex and containers to support Plex (e.g. Sonarr or Bazarr) as well as a Cloudflare tunnel for remote access
+services:
+###############  Media-fetching Containers  ################
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./config/sonarr:/config
+       # substitute your value for {some_dir_ex_myShows} for where your movies are kept
+      - {some_dir_ex_myShows}:/shows
+      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
+      - {some_dir_ex_Downloads}:/downloads
+      # substitute your value for {some_dir_ex_Backups} for where your movies are kept
+      - {some_dir_ex_Backups}:/var/backups
+    restart: unless-stopped
+  
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./config/radarr:/config
+      # substitute your value for {some_dir_ex_myMovies} for where your movies are kept
+      - {some_dir_ex_myMovies}:/movies
+      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
+      - {some_dir_ex_Downloads}:/downloads
+      # substitute your value for {some_dir_ex_Backups} for where your movies are kept
+      - {some_dir_ex_Backups}:/var/backups
+    restart: unless-stopped
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+      - AUTO_UPDATE=true #optional
+      - RUN_OPTS= #optional
+    volumes:
+      - ./Jackett:/config
+      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
+      - {some_dir_ex_Downloads}:/downloads
+    restart: unless-stopped
+
+  ###############  Media-managment Containers  ################
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./config:/config
+      # substitute your value for {some_dir_ex_myMovies} for where your movies are kept
+      - {some_dir_ex_myMovies}:/movies
+      # substitute your value for {some_dir_ex_myShows} for where your movies are kept
+      - {some_dir_ex_myShows}:/shows
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./appdata/config:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
+  ###############  Media-Streaming Containers  ################
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    #image: plexinc/pms-docker
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - PLEX_CLAIM={PLEX_CLAIM}
+      - UMASK_SET=022
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./config:/config
+      # substitute your value for {some_dir_ex_myShows} for where your movies are kept
+      - {some_dir_ex_myShows}:/shows
+      # substitute your value for {some_dir_ex_myMovies} for where your movies are kept
+      - {some_dir_ex_myMovies}:/movies
+      - ./config/Library/Application Support/Plex Media Server/Transcode:/transcode
+      - ./config/Library/Application Support/Plex Media Server:/data
+    devices:
+     - /dev/dri:/dev/dri
+    restart: unless-stopped
+  
+  # TODO: Consider adding Jellyfin or Kodi or Emby as an alternative to Plex
+
+  ###############  Networking-management  ################
+  cloudflare_tunnel:
+    image: cloudflare/cloudflared:latest
+    # Change {some_name} to the name of your choosing
+    container_name: {some_name}
+    restart: unless-stopped
+    # ${TUNNEL_TOKEN} should come from a .env file with the format of 'TUNNEL_TOKEN=_some_token_value_'
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    network_mode: host
+    volumes:
+      - ./cloudflared/data:/home/nonroot/.cloudflared/
+    environment:
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}

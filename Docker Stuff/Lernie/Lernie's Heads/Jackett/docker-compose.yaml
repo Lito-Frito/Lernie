@@ -1,0 +1,19 @@
+---
+version: "2.1"
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+      - AUTO_UPDATE=true #optional
+      - RUN_OPTS= #optional
+    volumes:
+      - ./Jackett:/config
+      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
+      - {some_dir_ex_Downloads}:/downloads
+    restart: unless-stopped

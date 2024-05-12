@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  cloudflare_tunnel:
+    image: cloudflare/cloudflared:latest
+    # Change {some_name} to the name of your choosing
+    container_name: {some_name}
+    restart: unless-stopped
+    # ${TUNNEL_TOKEN} should come from a .env file with the format of 'TUNNEL_TOKEN=_some_token_value_'
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    network_mode: host
+    volumes:
+      - ./cloudflared/data:/home/nonroot/.cloudflared/
+    environment:
+	  # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+

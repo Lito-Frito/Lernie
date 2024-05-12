@@ -1,0 +1,20 @@
+version: "2.1"
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./config/radarr:/config
+      # substitute your value for {some_dir_ex_myMovies} for where your movies are kept
+      - {some_dir_ex_myMovies}:/movies
+      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
+      - {some_dir_ex_Downloads}:/downloads
+      # substitute your value for {some_dir_ex_Backups} for where your movies are kept
+      - {some_dir_ex_Backups}:/var/backups
+    restart: unless-stopped

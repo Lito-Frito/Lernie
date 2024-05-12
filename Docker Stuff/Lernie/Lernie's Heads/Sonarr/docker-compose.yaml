@@ -1,0 +1,20 @@
+version: "2.1"
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # Change {some_TZ} to your TZ
+      - TZ=America/{some_TZ}
+    volumes:
+      - ./config/sonarr:/config
+       # substitute your value for {some_dir_ex_myShows} for where your movies are kept
+      - {some_dir_ex_myShows}:/shows
+      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
+      - {some_dir_ex_Downloads}:/downloads
+      # substitute your value for {some_dir_ex_Backups} for where your movies are kept
+      - {some_dir_ex_Backups}:/var/backups
+    restart: unless-stopped
