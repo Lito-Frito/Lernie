@@ -1,19 +1,16 @@
----
-version: "2.1"
 services:
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     container_name: jackett
-    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
-      # Change {some_TZ} to your TZ
-      - TZ=America/{some_TZ}
+      - TZ=America/New_York # set this to your own desired timezone
       - AUTO_UPDATE=true #optional
       - RUN_OPTS= #optional
     volumes:
-      - ./Jackett:/config
-      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
-      - {some_dir_ex_Downloads}:/downloads
+      - /path/to/data:/config # Change this to your desired path
+      - /path/to/blackhole:/downloads # Change this to your desired path
+    ports:
+      - 9117:9117
     restart: unless-stopped
