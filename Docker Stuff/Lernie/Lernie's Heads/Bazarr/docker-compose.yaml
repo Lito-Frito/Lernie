@@ -7,9 +7,9 @@ services:
       - PGID=1000
       - TZ=America/New_York # set this to your own desired timezone
     volumes:
-      - /path/to/bazarr/config:/config # Set this
-      - /path/to/movies:/movies # Set this (optional but recommended in most cases)
-      - /path/to/tv:/tv # Set this (optional but recommended in most cases)
+      - /path/to/bazarr/config:/config # Change this to your desired path
+      - /path/to/movies:/movies # Change this to your desired path (optional but recommended in most cases)
+      - /path/to/tv:/tv # Change this to your desired path (optional but recommended in most cases)
     ports:
       - 6767:6767
     restart: unless-stopped
