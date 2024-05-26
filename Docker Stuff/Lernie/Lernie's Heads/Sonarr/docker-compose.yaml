@@ -1,20 +1,16 @@
-version: "2.1"
 services:
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
-    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
-      # Change {some_TZ} to your TZ
-      - TZ=America/{some_TZ}
+      - TZ=America/New_York # set this to your own desired timezone
     volumes:
-      - ./config/sonarr:/config
-       # substitute your value for {some_dir_ex_myShows} for where your movies are kept
-      - {some_dir_ex_myShows}:/shows
-      # substitute your value for {some_dir_ex_Downloads} for where your movies are kept
-      - {some_dir_ex_Downloads}:/downloads
-      # substitute your value for {some_dir_ex_Backups} for where your movies are kept
-      - {some_dir_ex_Backups}:/var/backups
+      - /path/to/data:/config # Change this to your desired path
+      - /path/to/tvseries:/tv # Change this to your desired path
+      - /path/to/downloadclient-downloads:/downloads # Change this to your desired path
+      - /path/to/backups:/var/backups # Change this to your desired path; optional but recommended to restore your Radarr data later
+    ports:
+      - 8989:8989
     restart: unless-stopped
