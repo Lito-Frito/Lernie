@@ -1,25 +1,21 @@
-version: "3.3"
 services:
   plex:
     image: lscr.io/linuxserver/plex:latest
-    #image: plexinc/pms-docker
     container_name: plex
     network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
+      - TZ=America/New_York # set this to your own desired timezone
       - VERSION=docker
       - PLEX_CLAIM={PLEX_CLAIM}
       - UMASK_SET=022
-      - TZ=America/Los_Angeles
     volumes:
-      - ./config:/config
-      # substitute your value for {some_dir_ex_myShows} for where your movies are kept
-      - {some_dir_ex_myShows}:/shows
-      # substitute your value for {some_dir_ex_myMovies} for where your movies are kept
-      - {some_dir_ex_myMovies}:/movies
-      - ./config/Library/Application Support/Plex Media Server/Transcode:/transcode
-      - ./config/Library/Application Support/Plex Media Server:/data
+      - /path/to/library:/config
+      - /path/to/tvseries:/shows # Change this to your desired path
+      - /path/to/movies:/movies # Change this to your desired path
+      - /dev/shm:/transcode # This is optional and uses RAM to speed up transcoding
+      - /path/to/Library/Application Support/Plex Media Server:/data # All data Plex uses and generates (e.g. watch history) lives here
     devices:
      - /dev/dri:/dev/dri
     restart: unless-stopped
