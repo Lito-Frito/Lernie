@@ -40,7 +40,7 @@ You will need Docker in order to make use of the config files found within this 
 
 ## Usage
 
-This repo is a proof of concept for how to simulate a private Netflix, via a multi-container service. If you want to run your own private Plex server, it's recommended to use it for media you already own (i.e. ripped from DVDs, Blu-Rays, etc.). 
+This repo is a proof of concept for how to simulate a private Netflix, via a multi-container service. If you want to run your own private Plex server, it's recommended to use it for media you already own (e.g. ripped from DVDs, Blu-Rays, etc.). 
 
 If you want to use it for pirated content, that's on you. I'm not responsible for what you do with this repo; I'm just trying to get an A on my Docker class project.
 
