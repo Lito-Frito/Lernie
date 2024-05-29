@@ -16,15 +16,15 @@ This repo has all the necessary files to build a multi-container media-streaming
 
 Here's a quick rundown of what each container does:
 
-* Plex: Media server (sort of like your own private Netflix
+* Plex: Media server (sort of like your own private Netflix)
 * Sonarr: Tracks TV shows you flag for monitoring and talks to your indexers outlined in Jackett
 * Radarr: Same as Sonarr but for movies
 * Bazarr: Finds subtitles for your media
-* Jackett: Indexer aggregator
-* Overseer: Allows others to make requests, submit issues, and other features on your media libraries
+* Jackett: Indexer aggregator (what sonarr/radarr use to find the media you want)
+* Overseer: Allows others to make requests, submit issues, and other features on your media libraries (like a GitHub repo for your media)
 * Cloudflare Tunnel: Creates a tunnel to route whatever traffic you want to the outside world (as opposed to opening ports on your router/firewall 😬)
 
-This README will only explain what's available in this repo. For more detailed information on each container, please refer to the READMEs in the folders nested within.
+This README will only explain what's available in this repo. For more detailed information on deploying each container or the Lernie docker-compose file, please refer to the READMEs in the folders nested within.
 
 
 ## Badges
