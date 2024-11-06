@@ -1,65 +1,105 @@
-# This includes Plex and containers to support Plex (e.g. Sonarr or Bazarr) as well as a Cloudflare tunnel for remote access
 services:
-###############  Media-managment Containers  ################
-  bazarr: # For subtitles
-      image: lscr.io/linuxserver/bazarr:latest
-      container_name: bazarr
+###############  Media-Streaming Containers  ################
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - VERSION=docker
+      - PLEX_CLAIM=SOMETHING # make .env
+      - PLEX_GID=${PGID:-1000}
+      - PLEX_UID=${PUID:-1000}
+      - UMASK_SET=022
+      - ADVERTISE_IP=SOMETHING # make .env
+    volumes:
+      - ./plex/config:/config
+      - ./data/media/tv:/data/tv
+      - ./data/media/movies:/data/movies
+      - /tmp:/transcode # Have transcoding happen in RAM
+    restart: unless-stopped
+    devices:
+      - /dev/dri/:/dev/dri/
+      
+# TODO: Consider adding Jellyfin or Kodi or Emby as an alternative to Plex
+
+###############  Media-Management Containers  ################
+  bazarr: # For subtitle management
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1000
+      - PGID=1000 
+      - TZ=America/New_York 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro # look into applying this to others or removing overall
+      - ./bazarr:/config
+      - ./data/media/movies:/data/media/movies
+      - ./data/media/tv:/data/media/tv
+
+  radarr: # For movie management
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    ports:
+      - 7878:7878
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./radarr:/config
+      - ./data/media/movies:/media/movies
+      - ./qbittorent/downloads:/downloads
+
+  sonarr: # For TV show management
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./sonarr:/config
+      - ./data/media/tv:/media/tv
+      - ./qbittorent/downloads:/downloads
+# Todo: Look into adding Overseer container for requests
+
+###############  Media-fetching Containers  ################
+  jackett: # For torrent/indexer searching (i.e. finding media)
+      image: lscr.io/linuxserver/jackett:latest
+      container_name: jackett
       environment:
         - PUID=1000
         - PGID=1000
-        - TZ=America/New_York # set this to your own desired timezone
+        - TZ=America/New_York
+        - AUTO_UPDATE=true 
+        # - RUN_OPTS= #optional
       volumes:
-        - /path/to/bazarr/config:/config # Set this
-        - /path/to/movies:/movies # Set this (optional but recommended in most cases)
-        - /path/to/tv:/tv # Set this (optional but recommended in most cases)
+        - /etc/localtime:/etc/localtime:ro
+        - ./jackett:/config
+        - ./qbittorent/downloads:/downloads
       ports:
-        - 6767:6767
-      restart: unless-stopped
-  
-  overseerr: # For media requests and issues
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York # set this to your own desired timezone
-    volumes:
-      - /path/to/overseerr/config:/config # Change this to your desired path
-    ports:
-      - 5055:5055
-    restart: unless-stopped
+        - 9117:9117
+      # restart: unless-stopped (Consider adding this?)
 
-  radarr: # For movie management
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York # set this to your own desired timezone
-    volumes:
-      - /path/to/radarr/data:/config
-      - /path/to/movies:/movies # Change this to your desired path
-      - /path/to/download-client-downloads:/downloads # Change this to your desired path
-      - /path/to/backups:/var/backups # Change this to your desired path; optional but recommended to restore your Radarr data later
-    ports:
-      - 7878:7878
-    restart: unless-stopped
-
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York # set this to your own desired timezone
-    volumes:
-      - /path/to/data:/config # Change this to your desired path
-      - /path/to/tvseries:/tv # Change this to your desired path
-      - /path/to/downloadclient-downloads:/downloads # Change this to your desired path
-      - /path/to/backups:/var/backups # Change this to your desired path; optional but recommended to restore your Radarr data later
-    ports:
-      - 8989:8989
-    restart: unless-stopped
+# TODO: look into adding a qbit container for torrenting
 
 ###############  Networking-management  ################
   cloudflare_tunnel: # For remote access
@@ -72,45 +112,3 @@ services:
       command: tunnel run --token ${TUNNEL_TOKEN} # ${TUNNEL_TOKEN} should come from a .env file with the format of 'TUNNEL_TOKEN=_some_token_value_'
       network_mode: host
       restart: unless-stopped
-
-###############  Media-fetching Containers  ################
-  jackett: # For torrent/indexer searching
-      image: lscr.io/linuxserver/jackett:latest
-      container_name: jackett
-      environment:
-        - PUID=1000
-        - PGID=1000
-        - TZ=America/New_York # set this to your own desired timezone
-        - AUTO_UPDATE=true #optional
-        - RUN_OPTS= #optional
-      volumes:
-        - /path/to/data:/config # Change this to your desired path
-        - /path/to/blackhole:/downloads # Change this to your desired path
-      ports:
-        - 9117:9117
-      restart: unless-stopped
-
-###############  Media-Streaming Containers  ################
-  plex:
-      image: lscr.io/linuxserver/plex:latest
-      container_name: plex
-      network_mode: host
-      environment:
-        - PUID=1000
-        - PGID=1000
-        - TZ=America/New_York # set this to your own desired timezone
-        - VERSION=docker
-        - PLEX_CLAIM={PLEX_CLAIM}
-        - UMASK_SET=022
-      volumes:
-        - /path/to/library:/config
-        - /path/to/tvseries:/shows # Change this to your desired path
-        - /path/to/movies:/movies # Change this to your desired path
-        - /dev/shm:/transcode # This is optional and uses RAM to speed up transcoding
-        - ./path/to/Library/Application Support/Plex Media Server:/data # All data Plex uses and generates (e.g. watch history) lives here
-      devices:
-      - /dev/dri:/dev/dri
-      restart: unless-stopped
-      
-  # TODO: Consider adding Jellyfin or Kodi or Emby as an alternative to Plex
-
