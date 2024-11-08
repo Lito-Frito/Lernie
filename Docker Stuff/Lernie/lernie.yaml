@@ -4,16 +4,21 @@ services:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
     network_mode: host
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
       - VERSION=docker
-      - PLEX_CLAIM=SOMETHING # make .env
+      - PLEX_CLAIM=${PLEX_CLAIM} # has to be PLEX_CLAIM; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
       - PLEX_GID=${PGID:-1000}
       - PLEX_UID=${PUID:-1000}
       - UMASK_SET=022
-      - ADVERTISE_IP=SOMETHING # make .env
+      - ADVERTISE_IP=${ADVERTISE_IP} # has to be ADVERTISE_IP; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
     volumes:
       - ./plex/config:/config
       - ./data/media/tv:/data/tv
@@ -21,7 +26,7 @@ services:
       - /tmp:/transcode # Have transcoding happen in RAM
     restart: unless-stopped
     devices:
-      - /dev/dri/:/dev/dri/
+      - /dev/dri/:/dev/dri/ # For hardware acceleration/transcoding
       
 # TODO: Consider adding Jellyfin or Kodi or Emby as an alternative to Plex
 
@@ -31,7 +36,10 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     restart: unless-stopped
     logging:
-      driver: json-file
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
     ports:
       - 6767:6767
     environment:
@@ -39,7 +47,7 @@ services:
       - PGID=1000 
       - TZ=America/New_York 
     volumes:
-      - /etc/localtime:/etc/localtime:ro # look into applying this to others or removing overall
+      - /etc/localtime:/etc/localtime:ro
       - ./bazarr:/config
       - ./data/media/movies:/data/media/movies
       - ./data/media/tv:/data/media/tv
@@ -49,7 +57,10 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     restart: unless-stopped
     logging:
-      driver: json-file
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
     ports:
       - 7878:7878
     environment:
@@ -67,7 +78,10 @@ services:
     image: lscr.io/linuxserver/sonarr:latest
     restart: unless-stopped
     logging:
-      driver: json-file
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
     ports:
       - 8989:8989
     environment:
@@ -82,9 +96,14 @@ services:
 # Todo: Look into adding Overseer container for requests
 
 ###############  Media-fetching Containers  ################
-  jackett: # For torrent/indexer searching (i.e. finding media)
+  jackett: 
       image: lscr.io/linuxserver/jackett:latest
       container_name: jackett
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "100m"
+          max-file: "10"
       environment:
         - PUID=1000
         - PGID=1000
@@ -97,18 +116,23 @@ services:
         - ./qbittorent/downloads:/downloads
       ports:
         - 9117:9117
-      # restart: unless-stopped (Consider adding this?)
+      restart: unless-stopped
 
 # TODO: look into adding a qbit container for torrenting
 
 ###############  Networking-management  ################
-  cloudflare_tunnel: # For remote access
-      image: cloudflare/cloudflared:latest
-      container_name: river_styx # Change to the name of your choosing
-      environment:
-        - TZ=America/New_York # set this to your own desired timezone
-      volumes:
-        - ./cloudflared/data:/home/nonroot/.cloudflared/ # Change this to your desired path
-      command: tunnel run --token ${TUNNEL_TOKEN} # ${TUNNEL_TOKEN} should come from a .env file with the format of 'TUNNEL_TOKEN=_some_token_value_'
-      network_mode: host
-      restart: unless-stopped
+  cloudflare_tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: charon # Change to the name of your choosing
+    command: tunnel run
+    network_mode: host
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      - TZ=America/New_York # set this to your own desired timezone
+      - TUNNEL_TOKEN=${STYX_COINS} # has to be TUNNEL_TOKEN; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
+  
