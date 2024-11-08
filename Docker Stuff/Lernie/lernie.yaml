@@ -12,7 +12,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=America/New_York # set this to your own desired timezone
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM} # has to be PLEX_CLAIM; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
       - PLEX_GID=${PGID:-1000}
@@ -45,7 +45,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000 
-      - TZ=America/New_York 
+      - TZ=America/New_York # set this to your own desired timezone
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./bazarr:/config
@@ -66,7 +66,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/New_York 
+      - TZ=America/New_York # set this to your own desired timezone
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./radarr:/config
@@ -87,7 +87,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/New_York 
+      - TZ=America/New_York # set this to your own desired timezone
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./sonarr:/config
