@@ -1,0 +1,16 @@
+# Networking
+services:
+  cloudflare_tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: charon # Change to the name of your choosing
+    command: tunnel run
+    network_mode: host
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+    environment:
+      - TZ=America/New_York # set this to your own desired timezone
+      - TUNNEL_TOKEN=${STYX_COINS} # has to be TUNNEL_TOKEN; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"

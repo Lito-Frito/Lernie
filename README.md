@@ -1,6 +1,6 @@
 # Name
 
-Lernie, the multi-headed (container) Hydra for media streaming and management
+Lernie, the multi-headed (container) Hydra for media streaming and management alongside the River Styx,  a pathway out of hell (your home network) and into the physical world (the internet).
 
 ## Description
 
@@ -22,21 +22,22 @@ Here's a quick rundown of what each container does:
 * Bazarr: Finds subtitles for your media
 * Jackett: Indexer aggregator
 * Overseer: Allows others to make requests, submit issues, and other features on your media libraries
-* Cloudflare Tunnel: Creates a tunnel to route whatever traffic you want to the outside world (as opposed to opening ports on your router/firewall 😬)
+* Cloudflare Tunnel: Creates a tunnel to route whatever traffic you want to the outside world (as opposed to opening ports on your router/firewall 😬), sort of like a VPN but with less hassle
 
 This README will only explain what's available in this repo. For more detailed information on each container, please refer to the READMEs in the folders nested within.
 
-
-## Badges
-#TODO FIX THIS SECTION
-
-
 ## Visuals
-#TODO fix this msection
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+
+#TODO fix this section
+Probs include some gifs or carosel of images showing the services in action
 
 ## Installation
-You will need Docker in order to make use of the config files found within this repo. You could always run these services as stand alone apps but it's always best to treat your infra as cattle, not pets (i.e. make them modular and disposable, not precious and irreplaceable).
+
+You will need [Docker](https://docs.docker.com/engine/install/) in order to make use of the config files found within this repo. You could always run these services as stand alone apps but it's always best to treat your infra as cattle, not pets (i.e. make them modular and disposable, not precious and irreplaceable). If you can't use Docker (e.g. on Synology or Windows), you can still mostly follow the principles outlined in this repo but I recommend looking up tutorials on how to set up each service with your contrainsts/environment.
+
+I also recommend having enough storage space to store your media files (depends how much media you have but I recommend a couple terabytes, at least) It's good to also have a decent internet connection to stream your media to your devices (if you want to expose your Plex server to the outside world).
+
+Lastly, you'll need a VPN and, ideally, a domain you own so you can point them to all your services. I use [PIA](https://www.privateinternetaccess.com/download) for the VPN and [NameCheap](https://www.namecheap.com/) finding a domain. 
 
 ## Usage
 
