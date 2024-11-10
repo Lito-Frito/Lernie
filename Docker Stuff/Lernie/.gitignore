@@ -1,2 +1,5 @@
 #  This file houses all tokens/secrets that should not be shared with others
-.env
+#.env 
+# Line2 is commented out because I'm uploading a dummy .env file as a template
+# If you clone this repo and want to maintain your own fork, 
+# please uncomment this line so you don't accidentally upload your own, real .env file
