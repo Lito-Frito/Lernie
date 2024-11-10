@@ -118,21 +118,24 @@ services:
         - 9117:9117
       restart: unless-stopped
 
-# TODO: look into adding a qbit container for torrenting
-
-###############  Networking-management  ################
-  cloudflare_tunnel:
-    image: cloudflare/cloudflared:latest
-    container_name: charon # Change to the name of your choosing
-    command: tunnel run
-    network_mode: host
+  overseerr:
+    container_name: overseerr
+    image: lscr.io/linuxserver/overseerr:latest
     restart: unless-stopped
+    network_mode: host
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "10"
     environment:
-      - TZ=America/New_York # set this to your own desired timezone
-      - TUNNEL_TOKEN=${STYX_COINS} # has to be TUNNEL_TOKEN; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
-  
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./docker/appdata/overseerr:/config
+      - ./data:/data
+
+# TODO: look into adding a qbit container for torrenting
+

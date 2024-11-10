@@ -1,0 +1,2 @@
+#  This file houses all tokens/secrets that should not be shared with others
+.env
