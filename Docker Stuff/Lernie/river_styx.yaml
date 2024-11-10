@@ -2,7 +2,7 @@
 services:
   cloudflare_tunnel:
     image: cloudflare/cloudflared:latest
-    container_name: charon # Change to the name of your choosing
+    container_name: cloudflared
     command: tunnel run
     network_mode: host
     restart: unless-stopped
