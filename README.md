@@ -1,6 +1,6 @@
 # Name
 
-Lernie, the multi-headed (container) Hydra for media streaming and management alongside the River Styx,  a pathway out of hell (your home network) and into the physical world (the internet).
+Lernie, the multi-headed (container) Hydra for media streaming and management alongside the River Styx,  a pathway out of hell (your home network) and into the world of the living (the internet).
 
 ## Description
 
@@ -16,15 +16,14 @@ This repo has all the necessary files to build a multi-container media-streaming
 
 Here's a quick rundown of what each container does:
 
-* Plex: Media server (sort of like your own private Netflix
-* Sonarr: Tracks TV shows you flag for monitoring and talks to your indexers outlined in Jackett
+* Plex: Media server (sort of like your own private Netflix)
+* Sonarr: Tracks TV shows you flag for monitoring and talks to your indexers outlined in Jackett to pull requested media
 * Radarr: Same as Sonarr but for movies
 * Bazarr: Finds subtitles for your media
-* Jackett: Indexer aggregator
+* Jackett: Indexer aggregator (used in conjuction with something like qBit)
 * Overseer: Allows others to make requests, submit issues, and other features on your media libraries
 * Cloudflare Tunnel: Creates a tunnel to route whatever traffic you want to the outside world (as opposed to opening ports on your router/firewall 😬), sort of like a VPN but with less hassle
 
-This README will only explain what's available in this repo. For more detailed information on each container, please refer to the READMEs in the folders nested within.
 
 ## Visuals
 
@@ -37,7 +36,7 @@ You will need [Docker](https://docs.docker.com/engine/install/) in order to make
 
 I also recommend having enough storage space to store your media files (depends how much media you have but I recommend a couple terabytes, at least) It's good to also have a decent internet connection to stream your media to your devices (if you want to expose your Plex server to the outside world).
 
-Lastly, you'll need a VPN and, ideally, a domain you own so you can point them to all your services. I use [PIA](https://www.privateinternetaccess.com/download) for the VPN and [NameCheap](https://www.namecheap.com/) finding a domain. 
+Lastly, you'll need a VPN and, ideally, a domain you own so you can point them to all your services. I use [PIA](https://www.privateinternetaccess.com/download) for the VPN and [NameCheap](https://www.namecheap.com/) for finding a domain. 
 
 ## Usage
 

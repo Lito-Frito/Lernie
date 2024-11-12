@@ -42,5 +42,5 @@ Then you can just run `lernie {any command like "up -d" or "restart"}` and `rive
 Clone the repo. Then....
 <!-- TODO: Finish this section e.g. create .env file; where to get token values; how to set up CF Tunnels; etc -->
 
-
+# Notes: Add SSH user to Docker group (grep docker /etc/group; usermod -aG docker user_name; sudo systemctl restart docker)
 
