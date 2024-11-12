@@ -24,7 +24,6 @@ Here's a quick rundown of what each container does:
 * Overseer: Allows others to make requests, submit issues, and other features on your media libraries
 * Cloudflare Tunnel: Creates a tunnel to route whatever traffic you want to the outside world (as opposed to opening ports on your router/firewall 😬), sort of like a VPN but with less hassle
 
-This README will only explain what's available in this repo. For more detailed information on each container, please refer to the READMEs in the folders nested within.
 
 ## Visuals
 
