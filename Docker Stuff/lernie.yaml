@@ -12,7 +12,6 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/New_York # set this to your own desired timezone
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM} # has to be PLEX_CLAIM; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
       - PLEX_GID=${PGID:-1000}
@@ -24,6 +23,7 @@ services:
       - ./data/media/tv:/data/tv
       - ./data/media/movies:/data/movies
       - /tmp:/transcode # Have transcoding happen in RAM
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     devices:
       - /dev/dri/:/dev/dri/ # For hardware acceleration/transcoding
