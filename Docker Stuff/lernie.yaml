@@ -3,6 +3,7 @@ services:
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
+    restart: unless-stopped
     network_mode: host
     logging:
       driver: "json-file"
@@ -19,12 +20,11 @@ services:
       - UMASK_SET=022
       - ADVERTISE_IP=${ADVERTISE_IP} # has to be ADVERTISE_IP; value is set in .env file alongside compose file; .env file should be in format of VARIABLE="STRING"
     volumes:
-      - ./plex/config:/config
-      - ./data/media/tv:/data/tv
-      - ./data/media/movies:/data/movies
-      - /tmp:/transcode # Have transcoding happen in RAM
       - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
+      - ./plex/config:/config
+      - ./data/media/movies:/data/movies
+      - ./data/media/tv:/data/tv
+      - /tmp:/transcode # Have transcoding happen in RAM
     devices:
       - /dev/dri/:/dev/dri/ # For hardware acceleration/transcoding
       
@@ -32,8 +32,8 @@ services:
 
 ###############  Media-Management Containers  ################
   bazarr: # For subtitle management
-    container_name: bazarr
     image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
     restart: unless-stopped
     network_mode: host
     logging:
@@ -46,7 +46,6 @@ services:
     environment:
       - PUID=1000
       - PGID=1000 
-      - TZ=America/New_York # set this to your own desired timezone
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./bazarr:/config
@@ -54,8 +53,8 @@ services:
       - ./data/media/tv:/data/media/tv
 
   radarr: # For movie management
-    container_name: radarr
     image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
     restart: unless-stopped
     network_mode: host
     logging:
@@ -68,7 +67,6 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/New_York # set this to your own desired timezone
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./radarr:/config
@@ -76,8 +74,8 @@ services:
       - ./qbittorent/downloads:/downloads
 
   sonarr: # For TV show management
-    container_name: sonarr
     image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
     restart: unless-stopped
     network_mode: host
     logging:
@@ -90,7 +88,6 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/New_York # set this to your own desired timezone
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./sonarr:/config
@@ -112,20 +109,18 @@ services:
       environment:
         - PUID=1000
         - PGID=1000
-        - TZ=America/New_York
         - AUTO_UPDATE=true 
         # - RUN_OPTS= #optional
       volumes:
         - /etc/localtime:/etc/localtime:ro
         - ./jackett:/config
         - ./qbittorent/downloads:/downloads
-      ports:
-        - 9117:9117
-      restart: unless-stopped
+      # ports:
+      #   - 9117:9117
 
   overseerr:
-    container_name: overseerr
     image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
     restart: unless-stopped
     network_mode: host
     logging:
@@ -135,8 +130,7 @@ services:
         max-file: "10"
     environment:
       - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York 
+      - PGID=1000 
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./docker/appdata/overseerr:/config
